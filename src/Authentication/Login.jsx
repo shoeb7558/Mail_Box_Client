@@ -36,7 +36,7 @@ const LoginForm = () => {
         const data = await response.json();
         dispatch(login({ token: data.idToken, email: useremail  }));
         // AuthCtx.login(data.idToken, data.email);
-        navigate('/Editor');
+        navigate('/Inbox');
       } catch (error) {
         alert(error.message);
       }
