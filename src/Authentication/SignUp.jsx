@@ -23,7 +23,7 @@ const SignUpForm = () => {
     }
 
     try {
-      const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA1WvV5oP182FlmvtPzPvOhczNk0n0TOaQ', {
+      const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA7QKapHcEvF2moBWyukFSQBVPh3_Xd3ew', {
         method: 'POST',
         body: JSON.stringify({
           email: email,
@@ -99,7 +99,7 @@ const SignUpForm = () => {
         <button type="submit" className="btn btn-primary">
           Sign Up
         </button>
-        <Link>already Have account Login</Link>
+        <Link to='/login'>already Have account Login</Link>
       </form>
     </div>
   );
