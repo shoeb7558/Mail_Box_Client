@@ -1,55 +1,57 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const SignUpForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
 
     // Add your signup logic here
     if (!email || !password || !confirmPassword) {
-        alert('All fields are mandatory!');
-        return;
+      alert('All fields are mandatory!');
+      return;
+    }
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
+    try {
+      const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA1WvV5oP182FlmvtPzPvOhczNk0n0TOaQ', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          returnSecureToken: true
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        console.log('Successful signup');
+        navigate('/login');
+      } else {
+        const data = await response.json();
+        console.log(data);
+        alert('Signup failed');
       }
-  
-      // Check if passwords match
-      if (password !== confirmPassword) {
-        alert('Passwords do not match!');
-        return;
-      }
-  
-      fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA1WvV5oP182FlmvtPzPvOhczNk0n0TOaQ',
-      {
-          method: 'POST',
-          body: JSON.stringify({
-              email: email,
-              password : password,
-              returnSecureToken: true
-          }),
-          headers: {
-              'Content-Type': 'application/json'
-          }
-      }
-      ).then((res) => {
-          if(res.ok){
-              console.log('successful signin')
-          }else{
-              return res.json().then(data => {
-                  console.log(data)
-                  alert('SignIn Fail')
-              })
-          }
-      })
-  
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      console.log('Signing up...');
-    };
-    
-  
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Signup failed');
+    }
+
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+  };
 
   return (
     <div className="container">
@@ -97,6 +99,7 @@ const SignUpForm = () => {
         <button type="submit" className="btn btn-primary">
           Sign Up
         </button>
+        <Link>already Have account Login</Link>
       </form>
     </div>
   );
