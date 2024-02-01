@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const InboxPage = () => {
   const [emails, setEmails] = useState([]);
+ 
   const userEmail = localStorage.getItem("email").replace(/[@.]/g, "");
 
   useEffect(() => {
@@ -54,6 +55,8 @@ const InboxPage = () => {
     }
   };
 
+
+
   const handleDeleteMessage = async (id) => {
     try {
       // Delete email from backend
@@ -71,13 +74,18 @@ const InboxPage = () => {
     }
   };
 
+
+  
+  
+
   return (
     <div style={{ width: '100%', height: '100%', backgroundColor: '#EAEDED' }}>
       <Container className="mt-1" style={{ width: '100%' }}>
         <h2 className="mb-4">Inbox</h2>
         <div style={{ display: 'flex', margin: '1%' }}>
           <div>
-            <button style={{ borderRadius: '5px' }}><Link to='/Editor'>Compose</Link></button>
+            <button style={{ borderRadius: '5px', margin:'2px' }}><Link to='/Editor'>Compose</Link></button>
+            <button style={{ borderRadius: '5px', margin:'2px'  }}><Link to='/Sent'>Sent</Link></button>
           </div>
           <div style={{ borderRadius: '5px', padding: '10px', backgroundColor: '#D5DBDB', width: '100%', height: '450px', marginLeft: '5px', overflow: 'auto', margin: '5px' }}>
             <Row>

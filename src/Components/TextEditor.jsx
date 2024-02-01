@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Link } from 'react-router-dom';
 
+
 const ComposeEmail = () => {
+   
   const [editorState, setEditorState] = useState('');
   const [receiverEmail, setreceiverEmail] = useState('')
   const [subject, setsubject] = useState('');
   const sanitizedEmail = receiverEmail.replace(/[@.]/g, '');
+  const userEmail = localStorage.getItem("email").replace(/[@.]/g, "");
+  
+  
 
   const handleChange =  (content) => {
     setEditorState(content);
@@ -20,7 +25,8 @@ const ComposeEmail = () => {
         receiverEmail: receiverEmail,
         subject: subject,
         content: editorState,
-        read:true
+        read:true,
+        
       };
 
       try {
@@ -37,6 +43,7 @@ const ComposeEmail = () => {
         }
   
         console.log('Email sent successfully');
+       
         
         // Clear the fields after sending email
         setreceiverEmail('');
@@ -47,7 +54,38 @@ const ComposeEmail = () => {
       }
     
     console.log('Sending email with content:', editorState);
+
+    try {
+      const response = await fetch(`https://advanceexpencetracker-default-rtdb.firebaseio.com/${userEmail}/sent.json`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(emailData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send email');
+      }
+
+      console.log('Email sent successfully');
+     
+      
+      // Clear the fields after sending email
+      setreceiverEmail('');
+      setsubject('');
+      setEditorState('');
+    } catch (error) {
+      console.error('Error sending email:', error.message);
+    }
   };
+
+
+  
+  
+
+
+
 
   return (
     <div style={{padding:'10px',margin:'10px', backgroundColor:'#EAEDED', height:'100%'}}>
