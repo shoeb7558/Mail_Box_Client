@@ -7,7 +7,7 @@ const InboxPage = () => {
  
   const userEmail = localStorage.getItem("email").replace(/[@.]/g, "");
 
-  useEffect(() => {
+  
     const fetchEmails = async () => {
       try {
         const response = await fetch(`https://advanceexpencetracker-default-rtdb.firebaseio.com/${userEmail}/email.json`);
@@ -28,8 +28,8 @@ const InboxPage = () => {
         console.error('Error fetching emails:', error.message);
       }
     };
-    fetchEmails();
-  }, [userEmail]);
+    
+  
 
   const handleReadMessage = async (id) => {
     try {
@@ -75,7 +75,19 @@ const InboxPage = () => {
   };
 
 
+  useEffect(() => {
+    
+    fetchEmails();
+
   
+    const intervalId = setInterval(() => {
+      fetchEmails();
+      
+    }, 2000); 
+
+    
+    return () => clearInterval(intervalId);
+  }, [userEmail]);
   
 
   return (
