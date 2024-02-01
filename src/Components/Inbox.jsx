@@ -54,6 +54,23 @@ const InboxPage = () => {
     }
   };
 
+  const handleDeleteMessage = async (id) => {
+    try {
+      // Delete email from backend
+      const response = await fetch(`https://advanceexpencetracker-default-rtdb.firebaseio.com/${userEmail}/email/${id}.json`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete message');
+      }
+      // Remove deleted email from frontend display
+      const updatedEmails = emails.filter(email => email.id !== id);
+      setEmails(updatedEmails);
+    } catch (error) {
+      console.error('Error deleting message:', error.message);
+    }
+  };
+
   return (
     <div style={{ width: '100%', height: '100%', backgroundColor: '#EAEDED' }}>
       <Container className="mt-1" style={{ width: '100%' }}>
@@ -66,17 +83,13 @@ const InboxPage = () => {
             <Row>
               {emails.map((email, index) => (
                 <Col key={index} style={{ width: '100%' }} lg={1} md={1} sm={1} className="mb-3">
-                  
-                    
-                    <Card style={{backgroundColor:'gray'}} onClick={() => handleReadMessage(email.id)}>
+                  <Card style={{backgroundColor:'gray'}} onClick={() => handleReadMessage(email.id)}>
                     {email.read && <div style={{ width: '8px', height: '8px', backgroundColor: 'blue', borderRadius: '50%', marginRight: '5px' }}></div>}
                     <Card.Body>
-                    
                       <div onClick={(e) => e.stopPropagation()}>
-                        {/* Prevent the click event from bubbling up */}
-                        
-                        <Card.Title  >{email.subject}</Card.Title>
-                        <Card.Text  dangerouslySetInnerHTML={{ __html: email.content }} />
+                        <Card.Title>{email.subject}</Card.Title>
+                        <Card.Text dangerouslySetInnerHTML={{ __html: email.content }} />
+                        <button onClick={() => handleDeleteMessage(email.id)}>Delete</button>
                       </div>
                     </Card.Body>
                   </Card>
