@@ -7,6 +7,7 @@ import ComposeEmail from './Components/TextEditor';
 import { useSelector } from 'react-redux';
 import InboxPage from './Components/Inbox';
 import Home from './Components/home';
+import SentPage from './Components/sentemails';
 
 
 
@@ -22,6 +23,7 @@ function App() {
         {auth.isLoggedIn &&  <Route path="/Editor" element={<ComposeEmail />} />}
         <Route path="/" element={<Home />} />
         {auth.isLoggedIn && <Route path="/Inbox" element={<InboxPage />} />}
+        {auth.isLoggedIn && <Route path="/Sent" element={<SentPage />} />}
       </Routes>
     </Router>
   );
