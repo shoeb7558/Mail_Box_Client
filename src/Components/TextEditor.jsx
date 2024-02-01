@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { Link } from 'react-router-dom';
 
 const ComposeEmail = () => {
   const [editorState, setEditorState] = useState('');
@@ -18,7 +19,8 @@ const ComposeEmail = () => {
     const emailData = {
         receiverEmail: receiverEmail,
         subject: subject,
-        content: editorState
+        content: editorState,
+        read:true
       };
 
       try {
@@ -48,8 +50,9 @@ const ComposeEmail = () => {
   };
 
   return (
-    <div>
+    <div style={{padding:'10px',margin:'10px', backgroundColor:'#EAEDED', height:'100%'}}>
       <h4 style={{margin:'10px'}}>Compose Email</h4>
+      <button style={{borderRadius:'5px'}}><Link to='/Inbox'>Inbox</Link></button>
       <input 
       value={receiverEmail}
       onChange={(e) => setreceiverEmail(e.target.value)}

@@ -4,13 +4,9 @@ import { Link } from 'react-router-dom';
 
 const InboxPage = () => {
   const [emails, setEmails] = useState([]);
-  
   const userEmail = localStorage.getItem("email").replace(/[@.]/g, "");
-  console.log(userEmail)
-  
 
   useEffect(() => {
-    // Fetch emails from Firebase database
     const fetchEmails = async () => {
       try {
         const response = await fetch(`https://advanceexpencetracker-default-rtdb.firebaseio.com/${userEmail}/email.json`);
@@ -18,9 +14,7 @@ const InboxPage = () => {
           throw new Error('Failed to fetch emails');
         }
         const data = await response.json();
-        console.log('Fetched data:', data); // Debugging statement
         if (data && typeof data === 'object') {
-          // Convert object into an array of objects
           const emailsArray = Object.keys(data).map(key => ({
             id: key,
             ...data[key]
@@ -33,38 +27,66 @@ const InboxPage = () => {
         console.error('Error fetching emails:', error.message);
       }
     };
-  
     fetchEmails();
-  }, []);
-  
-  
+  }, [userEmail]);
+
+  const handleReadMessage = async (id) => {
+    try {
+      const response = await fetch(`https://advanceexpencetracker-default-rtdb.firebaseio.com/${userEmail}/email/${id}.json`, {
+        method: 'PATCH',
+        body: JSON.stringify({ read: false }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update message status');
+      }
+      const updatedEmails = emails.map(email => {
+        if (email.id === id) {
+          return { ...email, read: false };
+        }
+        return email;
+      });
+      setEmails(updatedEmails);
+    } catch (error) {
+      console.error('Error updating message status:', error.message);
+    }
+  };
 
   return (
-    <Container className="mt-5">
-  <h2 className="mb-4">Inbox</h2>
-  <div style={{ display: 'flex' }}>
-    <div>
-      <button ><Link to='/Editor'>Compose</Link></button>
+    <div style={{ width: '100%', height: '100%', backgroundColor: '#EAEDED' }}>
+      <Container className="mt-1" style={{ width: '100%' }}>
+        <h2 className="mb-4">Inbox</h2>
+        <div style={{ display: 'flex', margin: '1%' }}>
+          <div>
+            <button style={{ borderRadius: '5px' }}><Link to='/Editor'>Compose</Link></button>
+          </div>
+          <div style={{ borderRadius: '5px', padding: '10px', backgroundColor: '#D5DBDB', width: '100%', height: '450px', marginLeft: '5px', overflow: 'auto', margin: '5px' }}>
+            <Row>
+              {emails.map((email, index) => (
+                <Col key={index} style={{ width: '100%' }} lg={1} md={1} sm={1} className="mb-3">
+                  
+                    
+                    <Card style={{backgroundColor:'gray'}} onClick={() => handleReadMessage(email.id)}>
+                    {email.read && <div style={{ width: '8px', height: '8px', backgroundColor: 'blue', borderRadius: '50%', marginRight: '5px' }}></div>}
+                    <Card.Body>
+                    
+                      <div onClick={(e) => e.stopPropagation()}>
+                        {/* Prevent the click event from bubbling up */}
+                        
+                        <Card.Title  >{email.subject}</Card.Title>
+                        <Card.Text  dangerouslySetInnerHTML={{ __html: email.content }} />
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </div>
+      </Container>
     </div>
-    <div style={{padding:'20px', backgroundColor: 'gray', width: '100%', height: '450px', marginLeft: '5px', overflow: 'auto'  }}>
-      <Row>
-        {emails.map((email, index) => (
-          <Col key={index} style={{ width:'95%'}} lg={1} md={1} sm={1} className="mb-3">
-            <Card>
-              <Card.Body>
-                <Card.Title>{email.subject}</Card.Title>
-                {/* <Card.Subtitle className="mb-2 text-muted">{email.receiverEmail}</Card.Subtitle> */}
-                {/* Render HTML content */}
-                <Card.Text dangerouslySetInnerHTML={{ __html: email.content }} />
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    </div>
-  </div>
-</Container>
-
   );
 };
 
